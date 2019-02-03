@@ -1,8 +1,15 @@
+// Package dependencies
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+
+// Local dependencies
 import App from './App';
+import './index.css';
 import * as serviceWorker from './serviceWorker';
+
+// Styles
+import 'bootstrap/dist/css/bootstrap.css';
+
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
