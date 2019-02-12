@@ -1,6 +1,7 @@
 // Package dependencies
 import React, { Component, Fragment } from 'react';
 import moment from 'moment';
+import isEmpty from 'lodash/isEmpty';
 import { Table } from 'reactstrap';
 // import { graphql } from 'react-apollo';
 import { GetAllGames, SubscriptionAdded } from '../../graphql/queries/Game';
@@ -15,11 +16,13 @@ class GamesPool extends Component {
 
   componentDidMount() {
     this.subscribeToGamePool();
-    // this.setGamesValue();
-    // this.props.data.stopPolling.subscribe(() => {
-    //   console.log('asd');
-    // })
-    console.log(this.props.data);
+  }
+
+  static getDerivedStateFromProps({ data }) {
+    if (!isEmpty(data.games)) {
+      return { gamesAvailable: data.games };
+    }
+    return {};
   }
 
   subscribeToGamePool = () => {
@@ -34,15 +37,6 @@ class GamesPool extends Component {
         gamesAvailable: actualGames
       });
     });
-  }
-
-  setGamesValue = () => {
-    // var data = this.props.client;
-    // console.log(this.props.client);
-    // var games = data.games;
-    // if (games) {
-
-    // }
   }
 
   joinGame(e) {

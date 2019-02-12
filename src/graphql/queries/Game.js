@@ -17,6 +17,18 @@ const GetAllGames = gql`
 }
 `;
 
+const MyGames = gql`
+query mygames{
+  mygames(userid: "5c63179ed2318f19bc307156"){
+    id
+    turn{
+      username
+    }
+    createdDate
+  }
+}
+`;
+
 const SubscriptionAdded = gql`
 subscription onGameAdded {
   gameAdded{
@@ -42,5 +54,6 @@ export {
   // FetchMyGames,
   // FetchGameData,
   GetAllGames,
-  SubscriptionAdded
+  SubscriptionAdded,
+  MyGames
 };

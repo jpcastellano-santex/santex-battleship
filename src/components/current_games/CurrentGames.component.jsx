@@ -7,19 +7,22 @@ import { Table } from 'reactstrap';
 // Local dependencies
 import { formatDateToISO } from '../../helpers/formatters/commons';
 import TableRow from './TableRow.component';
+import { MyGames } from '../../graphql/queries/Game';
+import isEmpty from 'lodash/isEmpty';
 // import { FetchMyGames } from '../../graphql/queries/Game';
 
-
-// TODO: Replace this mock with data fetched from the backend
-const DUMMY_DATA = [
-  {createdAt: formatDateToISO(moment()), timePlayed: 0, currentTurn: {id: 1, player: 'John Doe'}},
-];
-
 class CurrentGames extends Component {
-  state = {gamesAvailable: []};
+  state = { myGames: [] };
+
+  static getDerivedStateFromProps({ data }) {
+    if (!isEmpty(data.mygames)) {
+      return { myGames: data.mygames };
+    }
+    return {};
+  }
 
   getRows = () => {
-    return DUMMY_DATA.map((gameData, index) => <TableRow index={index} {...gameData} />);
+    return this.state.myGames.map((gameData, index) => <TableRow index={index} {...gameData} />);
   };
 
   render() {
@@ -28,16 +31,16 @@ class CurrentGames extends Component {
         <h3>My current games</h3>
         <Table striped bordered hover dark>
           <thead>
-          <tr>
-            <th>#</th>
-            <th>Created At</th>
-            <th>Time Played</th>
-            <th>Turn</th>
-            <th />
-          </tr>
+            <tr>
+              <th>#</th>
+              <th>Created At</th>
+              <th>Time Played</th>
+              <th>Turn</th>
+              <th />
+            </tr>
           </thead>
           <tbody>
-          {this.getRows()}
+            {this.getRows()}
           </tbody>
         </Table>
       </Fragment>
@@ -45,10 +48,4 @@ class CurrentGames extends Component {
   }
 }
 
-
-// export default compose(
-//   withApollo,
-//   graphql(FetchMyGames),
-// )(CurrentGames);
-
-export default CurrentGames;
+export default withApollo(graphql(MyGames)(CurrentGames));

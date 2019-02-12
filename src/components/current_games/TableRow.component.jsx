@@ -22,14 +22,15 @@ class TableRow extends Component {
   };
 
   render() {
-    const {index, createdAt, timePlayed, currentTurn} = this.props;
+    const { id, createdDate, turn } = this.props;
 
     return (
       <tr>
-        <td>{index}</td>
-        <td>{formatDate(createdAt)}</td>
-        <td>{timePlayed}</td>
-        <td>{currentTurn.player}</td>
+        <td>{id}</td>
+        <td>{createdDate}</td>
+        <td></td>
+        {/* <td>{timePlayed}</td> */}
+        <td>{turn.username}</td>
         <td>
           <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
             <DropdownToggle caret size="sm">
