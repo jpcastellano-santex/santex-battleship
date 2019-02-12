@@ -1,9 +1,10 @@
 // Package dependencies
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
+// import { Link } from 'react-router-dom';
 
 // Local dependencies
-import { formatDate } from '../../helpers/formatters/commons';
+// import { formatDate } from '../../helpers/formatters/commons';
 
 
 class TableRow extends Component {
@@ -22,15 +23,16 @@ class TableRow extends Component {
   };
 
   render() {
-    const {index, createdAt, player} = this.props;
+    const { id, createdDate, owner } = this.props;
 
     return (
       <tr>
-        <td>{index}</td>
-        <td>{formatDate(createdAt)}</td>
-        <td>{player.name}</td>
-        <td>
-          <Button color="info" onClick={this.props.onClick}>Play</Button>
+        <td>{id}</td>
+        <td>{createdDate}</td>
+        <td>{owner.username}</td>
+        <td>        
+          {/* <Link to={{ pathname: `game/${index}` }}>Play</Link> */}
+          <Button color="info" onClick={e => this.props.onClick({ id })}>Play</Button>
         </td>
       </tr>
     );
