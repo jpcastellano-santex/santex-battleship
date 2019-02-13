@@ -40,7 +40,8 @@ class Cell extends Component {
     const cellClassName = classNames(
       'cell',
       {
-        unchecked: status >= cellStatus.WATER,
+        ship: status > cellStatus.WATER,
+        unchecked: status === cellStatus.WATER,
         miss: status === cellStatus.MISS,
         hitted: status === cellStatus.HITTED,
       },

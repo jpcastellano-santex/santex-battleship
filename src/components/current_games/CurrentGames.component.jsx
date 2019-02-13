@@ -1,18 +1,21 @@
 // Package dependencies
 import React, { Component, Fragment } from 'react';
-import { compose, graphql, withApollo } from 'react-apollo';
-import moment from 'moment';
+import { withRouter } from 'react-router-dom';
+import { graphql, withApollo } from 'react-apollo';
 import { Table } from 'reactstrap';
+import *  as _ from 'lodash';
 
-// Local dependencies
-import { formatDateToISO } from '../../helpers/formatters/commons';
 import TableRow from './TableRow.component';
 import { MyGames } from '../../graphql/queries/Game';
 import isEmpty from 'lodash/isEmpty';
-// import { FetchMyGames } from '../../graphql/queries/Game';
+import { GameJoined } from '../../graphql/subscriptions/Game';
 
 class CurrentGames extends Component {
   state = { myGames: [] };
+
+  componentDidMount() {
+    this.subscribeToJoinGame();
+  }
 
   static getDerivedStateFromProps({ data }) {
     if (!isEmpty(data.mygames)) {
@@ -21,8 +24,27 @@ class CurrentGames extends Component {
     return {};
   }
 
+  subscribeToJoinGame = () => {
+    this.props.client.subscribe({
+      query: GameJoined,
+      fetchPolicy: "no-cache"
+    }).subscribe(data => {
+      var game = data.data.gameJoined;
+      var actualGames = this.state.myGames;
+      var index = _.findIndex(actualGames, function (item) { return item.id === game.id; });
+      actualGames[index] = game;
+      this.setState({
+        myGames: actualGames
+      });
+    });
+  }
+
+  openGame = (e) => {
+    this.props.history.push(`/game/${e.id}`);
+  }
+
   getRows = () => {
-    return this.state.myGames.map((gameData, index) => <TableRow index={index} {...gameData} />);
+    return this.state.myGames.map((gameData, index) => <TableRow index={index} onPlayClick={this.openGame} {...gameData} />);
   };
 
   render() {
@@ -48,4 +70,4 @@ class CurrentGames extends Component {
   }
 }
 
-export default withApollo(graphql(MyGames)(CurrentGames));
+export default withApollo(graphql(MyGames)(withRouter(CurrentGames)));

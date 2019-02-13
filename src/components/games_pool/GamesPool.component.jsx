@@ -1,15 +1,16 @@
 // Package dependencies
 import React, { Component, Fragment } from 'react';
-import moment from 'moment';
+import { withRouter } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import { Table } from 'reactstrap';
 // import { graphql } from 'react-apollo';
-import { GetAllGames, SubscriptionAdded } from '../../graphql/queries/Game';
+import { GameAdded } from '../../graphql/subscriptions/Game';
 
-// Local dependencies
-import { formatDateToISO } from '../../helpers/formatters/commons';
 import TableRow from './TableRow.component';
 import { graphql, withApollo } from 'react-apollo';
+import { AvailableGames } from '../../graphql/queries/Game';
+
+const loggeduserid = localStorage.getItem('userid');
 
 class GamesPool extends Component {
   state = { gamesAvailable: [] };
@@ -19,28 +20,30 @@ class GamesPool extends Component {
   }
 
   static getDerivedStateFromProps({ data }) {
-    if (!isEmpty(data.games)) {
-      return { gamesAvailable: data.games };
+    if (!isEmpty(data.availablegames)) {
+      return { gamesAvailable: data.availablegames };
     }
     return {};
   }
 
   subscribeToGamePool = () => {
     this.props.client.subscribe({
-      query: SubscriptionAdded,
+      query: GameAdded,
       fetchPolicy: "no-cache"
     }).subscribe(data => {
       var game = data.data.gameAdded;
-      var actualGames = this.state.gamesAvailable;
-      actualGames.push(game);
-      this.setState({
-        gamesAvailable: actualGames
-      });
+      if (game.owner.id !== loggeduserid) {
+        var actualGames = this.state.gamesAvailable;
+        actualGames.push(game);
+        this.setState({
+          gamesAvailable: actualGames
+        });
+      }
     });
   }
 
-  joinGame(e) {
-    // console.log(e);
+  joinGame = () => {
+    // this.props.history.push('/game/1');
   }
 
   getRows = () => {
@@ -69,4 +72,8 @@ class GamesPool extends Component {
   }
 }
 
-export default withApollo(graphql(GetAllGames)(GamesPool));
+export default withApollo(graphql(AvailableGames, {
+  options: {
+    variables: { userid: loggeduserid }
+  }
+})(withRouter(GamesPool)));

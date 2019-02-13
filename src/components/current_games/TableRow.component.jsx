@@ -1,10 +1,12 @@
 // Package dependencies
 import React, { Component } from 'react';
 import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import moment from 'moment';
 
 // Local dependencies
 import { formatDate } from '../../helpers/formatters/commons';
 
+const loggeduserid = localStorage.getItem('userid');
 
 class TableRow extends Component {
   constructor(props) {
@@ -21,16 +23,24 @@ class TableRow extends Component {
     });
   };
 
-  render() {
-    const { id, createdDate, turn } = this.props;
+  timeToDate = (time) => {
+    var date = new Date(parseInt(time));
+    return moment(date).format("DD/MM/YYYY HH:mm");
+  }
 
+  render() {
+    const { id, createdDate, turn, guest } = this.props;
     return (
       <tr>
         <td>{id}</td>
-        <td>{createdDate}</td>
+        <td>{this.timeToDate(createdDate)}</td>
         <td></td>
-        {/* <td>{timePlayed}</td> */}
-        <td>{turn.username}</td>
+        {guest &&
+          <td>{turn.username}</td>
+        }
+        {!guest &&
+          <td>Unassigned</td>
+        }
         <td>
           <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
             <DropdownToggle caret size="sm">
@@ -38,7 +48,9 @@ class TableRow extends Component {
             </DropdownToggle>
             <DropdownMenu>
               <DropdownItem header>See board</DropdownItem>
-              <DropdownItem disabled>Play</DropdownItem>
+              {(guest && turn.id === loggeduserid) &&
+                <DropdownItem onClick={e => this.props.onPlayClick({ id })}>Play</DropdownItem>
+              }
             </DropdownMenu>
           </ButtonDropdown>
         </td>

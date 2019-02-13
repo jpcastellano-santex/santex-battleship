@@ -1,13 +1,34 @@
 import gql from 'graphql-tag';
-// const FetchCurrentGames = gql``;
-// const FetchMyGames = gql``;
-// const FetchGameData = gql`
-//   query FetchGameData(id: String!) {}
-// `;
 
 const GetAllGames = gql`
 {
   games {
+    id
+    owner {
+      username
+    }    
+    createdDate
+  }
+}
+`;
+
+const GameBoard = gql`
+query gameboard($id:  String!, $userid: String!)
+{
+  gameboard(id: $id, userid: $userid) {
+    id
+    guestBoard
+    ownerBoard
+    ownerId
+    guestId
+  }
+}
+`;
+
+const AvailableGames = gql`
+query availablegames($userid: String!)
+{
+  availablegames(userid: $userid) {
     id
     owner {
       username
@@ -23,37 +44,22 @@ query mygames{
     id
     turn{
       username
+      id
     }
     createdDate
-  }
-}
-`;
-
-const SubscriptionAdded = gql`
-subscription onGameAdded {
-  gameAdded{
-    id
-    owner {
+    guest {
       username
+      id
     }    
-    createdDate
   }
 }
 `;
 
-// const Subscription = gql`
-// subscription onUserAdded {
-//   userAdded{
-//     username
-//   }
-// }
-// `;
+
 
 export {
-  // FetchCurrentGames,
-  // FetchMyGames,
-  // FetchGameData,
+  AvailableGames,
   GetAllGames,
-  SubscriptionAdded,
-  MyGames
+  MyGames,
+  GameBoard
 };

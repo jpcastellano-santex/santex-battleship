@@ -10,7 +10,6 @@ import './Board.sass';
 
 const Board = (props) => {
   const { matrix, onClick } = props;
-
   return (
     <div className="board">
       <div className="board_elements">
