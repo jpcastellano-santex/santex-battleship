@@ -11,12 +11,15 @@ import { GameJoined, GameAdded, GameEnd } from '../../graphql/subscriptions/Game
 
 class CurrentGames extends Component {
   state = { myGames: [] };
+  subscribeObjectJoinGame = {};
+  subscribeObjectGamePool = {};
+  subscribeObjectGameEnd = {};
 
   componentDidMount() {
     this.getGames();
     this.subscribeToJoinGame();
     this.subscribeToGamePool();
-    this.subscribteToGameEnd();
+    this.subscribeToGameEnd();
   }
 
   getGames() {
@@ -31,8 +34,14 @@ class CurrentGames extends Component {
     })
   }
 
+  componentWillUnmount() {
+    this.subscribeObjectJoinGame.unsubscribe();
+    this.subscribeObjectGamePool.unsubscribe();
+    this.subscribeObjectGameEnd.unsubscribe();
+  }
+
   subscribeToGamePool = () => {
-    this.props.client.subscribe({
+    this.subscribeObjectGamePool = this.props.client.subscribe({
       query: GameAdded,
       fetchPolicy: "no-cache"
     }).subscribe(data => {
@@ -47,8 +56,8 @@ class CurrentGames extends Component {
     });
   }
 
-  subscribteToGameEnd = () => {
-    this.props.client.subscribe({
+  subscribeToGameEnd = () => {
+    this.subscribeObjectGameEnd = this.props.client.subscribe({
       query: GameEnd,
       fetchPolicy: "no-cache"
     }).subscribe(data => {
@@ -56,17 +65,17 @@ class CurrentGames extends Component {
       var actualGames = this.state.myGames;
       var index = _.findIndex(actualGames, function (item) { return item.id === game.id; });
       actualGames.splice(index, 1);
-      this.setState({
-        myGames: actualGames
-      });
       var isWinner = game.winnerId === this.props.loggeduserid;
       var message = isWinner ? "WON" : "LOST";
       alert(`YOU ${message} GAME: ${game.id}`);
+      this.setState({
+        myGames: actualGames
+      });
     });
   }
 
   subscribeToJoinGame = () => {
-    this.props.client.subscribe({
+    this.subscribeObjectJoinGame = this.props.client.subscribe({
       query: GameJoined,
       fetchPolicy: "no-cache"
     }).subscribe(data => {

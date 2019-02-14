@@ -42,17 +42,22 @@ class TableRow extends Component {
         {!guest &&
           <td>-</td>
         }
-        <td>
-          <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-            <DropdownToggle caret size="sm">
-              Actions
+        {guest &&
+          <td>
+            <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+              <DropdownToggle caret size="sm">
+                Actions
             </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem header>See board</DropdownItem>
-              <DropdownItem onClick={e => this.props.onPlayClick({ id })}>Play</DropdownItem>
-            </DropdownMenu>
-          </ButtonDropdown>
-        </td>
+              <DropdownMenu>
+                {/* <DropdownItem header>See board</DropdownItem> */}
+                <DropdownItem onClick={e => this.props.onPlayClick({ id })}>Play</DropdownItem>
+              </DropdownMenu>
+            </ButtonDropdown>
+          </td>
+        }
+        {!guest &&
+          <td>-</td>
+        }
       </tr>
     );
   }

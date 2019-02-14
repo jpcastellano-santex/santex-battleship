@@ -2,11 +2,8 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'reactstrap';
 import { withRouter } from 'react-router-dom';
-import { graphql, withApollo } from 'react-apollo';
+import { withApollo } from 'react-apollo';
 
-// Local dependencies
-import { putShipsOnCells } from '../../helpers/game/ships';
-import { ships as gameShips, } from '../../constants';
 import Board from '../board/Board.component';
 import SurrenderModal from '../surrender_modal/SurrenderModal.component';
 import { GameBoard } from '../../graphql/queries/Game';
@@ -34,28 +31,35 @@ class Game extends Component {
 
     this.state = { otherBoard: MOCK_GAME_MATRIX, myBoard: MOCK_GAME_MATRIX, winner: null };
   }
+  subscribeObjectGameEnd = {}
+  subscribeObjectGameClick = {}
 
   componentDidMount() {
     this.getGame();
     this.subscribeToGameClick();
-    this.subscribteToGameEnd();
+    this.subscribeToGameEnd();
   }
 
-  subscribteToGameEnd = () => {
-    this.props.client.subscribe({
+  componentWillUnmount() {
+    this.subscribeObjectGameClick.unsubscribe();
+    this.subscribeObjectGameEnd.unsubscribe();
+  }
+
+  subscribeToGameEnd = () => {
+    this.subscribeObjectGameEnd = this.props.client.subscribe({
       query: GameEnd,
       fetchPolicy: "no-cache"
     }).subscribe(response => {
       if (this.props.match.params.id === response.data.gameEnd.id) {
         this.setState({
           winner: response.data.gameEnd.winnerId
-        });        
+        });
       }
     });
   }
 
   subscribeToGameClick = () => {
-    this.props.client.subscribe({
+    this.subscribeObjectGameClick = this.props.client.subscribe({
       query: GameClicked,
       fetchPolicy: "no-cache"
     }).subscribe(response => {
@@ -127,7 +131,7 @@ class Game extends Component {
       return (
         <div>
           {(this.state.winner === loggeduserid) && <div>You won</div>}
-          {(this.state.winner != loggeduserid) && <div>You lost</div>}
+          {(this.state.winner !== loggeduserid) && <div>You lost</div>}
         </div>
       );
     } else {
@@ -135,11 +139,15 @@ class Game extends Component {
         <Row className="game">
           <Col xs={{ size: 8, offset: 2 }}>
             <h1>Opponent</h1>
+            <h2>turn:
+            {(this.state.turn === loggeduserid) && <label>you</label>}
+              {(this.state.turn !== loggeduserid) && <label>opponent</label>}
+            </h2>
             <Board
               matrix={this.state.otherBoard}
               onClick={this.onClick}
               turn={this.state.turn}
-              disabled={this.state.turn != loggeduserid}
+              disabled={this.state.turn !== loggeduserid}
             />
             <h1>MyBoard</h1>
             <Board

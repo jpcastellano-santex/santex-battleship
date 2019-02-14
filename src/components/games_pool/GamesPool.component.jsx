@@ -1,22 +1,26 @@
 // Package dependencies
 import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import { Table } from 'reactstrap';
 // import { graphql } from 'react-apollo';
 import { GameAdded } from '../../graphql/subscriptions/Game';
 
 import TableRow from './TableRow.component';
-import { graphql, withApollo } from 'react-apollo';
+import { withApollo } from 'react-apollo';
 import { AvailableGames } from '../../graphql/queries/Game';
 import { JoinGame } from '../../graphql/mutations/Game';
 
 class GamesPool extends Component {
   state = { gamesAvailable: [] };
+  subscribeObjectGamePool = {}
 
   componentDidMount() {
     this.subscribeToGamePool();
     this.getGames();
+  }
+
+  componentWillUnmount() {
+    this.subscribeObjectGamePool.unsubscribe();
   }
 
   getGames() {
@@ -32,7 +36,7 @@ class GamesPool extends Component {
   }
 
   subscribeToGamePool = () => {
-    this.props.client.subscribe({
+    this.subscribeObjectGamePool = this.props.client.subscribe({
       query: GameAdded,
       fetchPolicy: "no-cache"
     }).subscribe(data => {

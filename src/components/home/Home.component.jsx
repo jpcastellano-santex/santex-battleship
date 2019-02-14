@@ -1,5 +1,5 @@
 // Package dependencies
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Col, Row, Button } from 'reactstrap';
 
 // Local dependencies
@@ -19,8 +19,6 @@ class Home extends Component {
     this.props.client.mutate({
       mutation: CreateGame,
       variables: { userid: loggeduserid }
-    }).then(response => {
-      // this.props.history.push(`/game/${response.data.joingame.id}`);
     });
   }
 
