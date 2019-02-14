@@ -20,7 +20,6 @@ class Home extends Component {
       mutation: CreateGame,
       variables: { userid: loggeduserid }
     }).then(response => {
-      console.log(response);
       // this.props.history.push(`/game/${response.data.joingame.id}`);
     });
   }

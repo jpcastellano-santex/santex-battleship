@@ -7,7 +7,8 @@ import { withRouter } from 'react-router-dom';
 class Login extends Component {
     state = {
         username: '',
-        password: ''
+        password: '',
+        errorlogin: false
     };
 
     logUser = () => {
@@ -21,9 +22,11 @@ class Login extends Component {
             if (response.data.login) {
                 localStorage.setItem('userid', response.data.login.id);
                 localStorage.setItem('username', response.data.login.username);
-                window.location.reload();                
+                window.location.reload();
             } else {
-
+                this.setState({
+                    errorlogin: true
+                });
             }
         })
     }
@@ -39,7 +42,10 @@ class Login extends Component {
                     <label for="txtPassword">Password</label>
                     <input type="password" class="form-control" id="txtPassword" value={this.state.password} onChange={e => this.setState({ password: e.target.value })} />
                 </div>
-                <button onClick={this.logUser} class="btn btn-primary">Log</button>
+                <button onClick={this.logUser} class="btn btn-primary">Login</button>
+                {this.state.errorlogin &&
+                    <small class="form-text text-muted">User not valid.</small>
+                }
             </div>
         )
     }

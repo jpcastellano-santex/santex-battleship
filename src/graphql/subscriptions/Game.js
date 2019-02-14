@@ -30,6 +30,16 @@ subscription onGameClicked {
 }
 `;
 
+const GameEnd = gql`
+subscription onGameClicked {
+  gameEnd{
+    id
+    winnerId
+    surrender
+  }
+}
+`;
+
 const GameJoined = gql`
 subscription onGameJoined {
   gameJoined{
@@ -51,5 +61,6 @@ subscription onGameJoined {
 export {
   GameAdded,
   GameJoined,
-  GameClicked
+  GameClicked,
+  GameEnd
 };

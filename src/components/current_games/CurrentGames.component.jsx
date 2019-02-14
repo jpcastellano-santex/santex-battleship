@@ -7,7 +7,7 @@ import *  as _ from 'lodash';
 
 import TableRow from './TableRow.component';
 import { MyGames } from '../../graphql/queries/Game';
-import { GameJoined, GameAdded } from '../../graphql/subscriptions/Game';
+import { GameJoined, GameAdded, GameEnd } from '../../graphql/subscriptions/Game';
 
 class CurrentGames extends Component {
   state = { myGames: [] };
@@ -16,6 +16,7 @@ class CurrentGames extends Component {
     this.getGames();
     this.subscribeToJoinGame();
     this.subscribeToGamePool();
+    this.subscribteToGameEnd();
   }
 
   getGames() {
@@ -43,6 +44,24 @@ class CurrentGames extends Component {
           myGames: actualGames
         });
       }
+    });
+  }
+
+  subscribteToGameEnd = () => {
+    this.props.client.subscribe({
+      query: GameEnd,
+      fetchPolicy: "no-cache"
+    }).subscribe(data => {
+      var game = data.data.gameEnd;
+      var actualGames = this.state.myGames;
+      var index = _.findIndex(actualGames, function (item) { return item.id === game.id; });
+      actualGames.splice(index, 1);
+      this.setState({
+        myGames: actualGames
+      });
+      var isWinner = game.winnerId === this.props.loggeduserid;
+      var message = isWinner ? "WON" : "LOST";
+      alert(`YOU ${message} GAME: ${game.id}`);
     });
   }
 

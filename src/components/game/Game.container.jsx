@@ -10,8 +10,8 @@ import { ships as gameShips, } from '../../constants';
 import Board from '../board/Board.component';
 import SurrenderModal from '../surrender_modal/SurrenderModal.component';
 import { GameBoard } from '../../graphql/queries/Game';
-import { GameClicked } from '../../graphql/subscriptions/Game';
-import { CellClick } from '../../graphql/mutations/Game';
+import { GameClicked, GameEnd } from '../../graphql/subscriptions/Game';
+import { CellClick, SurrenderGame } from '../../graphql/mutations/Game';
 
 const loggeduserid = localStorage.getItem('userid');
 
@@ -32,14 +32,27 @@ class Game extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { otherBoard: MOCK_GAME_MATRIX, myBoard: MOCK_GAME_MATRIX };
+    this.state = { otherBoard: MOCK_GAME_MATRIX, myBoard: MOCK_GAME_MATRIX, winner: null };
   }
 
   componentDidMount() {
     this.getGame();
     this.subscribeToGameClick();
+    this.subscribteToGameEnd();
   }
 
+  subscribteToGameEnd = () => {
+    this.props.client.subscribe({
+      query: GameEnd,
+      fetchPolicy: "no-cache"
+    }).subscribe(response => {
+      if (this.props.match.params.id === response.data.gameEnd.id) {
+        this.setState({
+          winner: response.data.gameEnd.winnerId
+        });        
+      }
+    });
+  }
 
   subscribeToGameClick = () => {
     this.props.client.subscribe({
@@ -73,10 +86,12 @@ class Game extends Component {
       var board = response.data.gameboard[boardname];
       var myBoard = response.data.gameboard[myboardname];
       var turn = response.data.gameboard.turnId;
+      var winner = response.data.gameboard.winnerId;
       this.setState({
         otherBoard: board,
         myBoard: myBoard,
-        turn: turn
+        turn: turn,
+        winner: winner
       });
     })
   }
@@ -91,42 +106,54 @@ class Game extends Component {
         row: x
       }
     }).then(response => {
-      // console.log(response);
-      // this.props.history.push(`/game/${response.data.joingame.id}`);
+
     });
-    // TODO: Make a mutation to modify Game's current status based on the current action
-    // console.log('$ x, y, newStatus', x, y, newStatus); // eslint-disable-line
   };
 
   surrenderGame = () => {
-    // TODO: Make a mutation to modify Game's current status based on the current action
-    console.log('$ Player surrenders !'); // eslint-disable-line
+    this.props.client.mutate({
+      mutation: SurrenderGame,
+      variables: {
+        userid: loggeduserid,
+        id: this.props.match.params.id
+      }
+    }).then(response => {
+      this.props.history.push('/');
+    });
   };
 
   render() {
-    console.log(this.state.turn, loggeduserid);
-    return (
-      <Row className="game">
-        <Col xs={{ size: 8, offset: 2 }}>
-          <h1>Opponent</h1>
-          <Board
-            matrix={this.state.otherBoard}
-            onClick={this.onClick}
-            turn={this.state.turn}
-            disabled={this.state.turn != loggeduserid}
-          />
-          <h1>MyBoard</h1>
-          <Board
-            matrix={this.state.myBoard}
-            disabled={true}
-            myBoard={true}
-          />
-        </Col>
-        <Col xs={{ size: 8, offset: 2 }} className="mt-3 text-center">
-          <SurrenderModal onClick={this.surrenderGame} />
-        </Col>
-      </Row>
-    );
+    if (this.state.winner) {
+      return (
+        <div>
+          {(this.state.winner === loggeduserid) && <div>You won</div>}
+          {(this.state.winner != loggeduserid) && <div>You lost</div>}
+        </div>
+      );
+    } else {
+      return (
+        <Row className="game">
+          <Col xs={{ size: 8, offset: 2 }}>
+            <h1>Opponent</h1>
+            <Board
+              matrix={this.state.otherBoard}
+              onClick={this.onClick}
+              turn={this.state.turn}
+              disabled={this.state.turn != loggeduserid}
+            />
+            <h1>MyBoard</h1>
+            <Board
+              matrix={this.state.myBoard}
+              disabled={true}
+              myBoard={true}
+            />
+          </Col>
+          <Col xs={{ size: 8, offset: 2 }} className="mt-3 text-center">
+            <SurrenderModal onClick={this.surrenderGame} />
+          </Col>
+        </Row>
+      );
+    }
   }
 }
 

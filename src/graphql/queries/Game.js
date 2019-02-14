@@ -20,6 +20,7 @@ query gameboard($id:  String!, $userid: String!)
     guestBoard
     ownerBoard
     ownerId
+    winnerId
     guestId
     turnId
   }

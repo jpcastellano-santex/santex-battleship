@@ -27,8 +27,18 @@ mutation cellclick($id: String!, $userid: String!, $row: Int!, $col: Int!)
 }
 `;
 
+const SurrenderGame = gql`
+mutation surrenderGame($id: String!, $userid: String!)
+{
+  surrenderGame(id: $id, userid: $userid) {
+    id
+  }
+}
+`;
+
 export {
   JoinGame,
   CreateGame,
-  CellClick
+  CellClick,
+  SurrenderGame
 };
