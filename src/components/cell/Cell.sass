@@ -1,6 +1,8 @@
 $unchecked-cell-background-color: #90A6C1
 $miss-cell-background-color: #C15E48
 $hitted-cell-background-color: #60C14F
+$ship-cell-background-color: #000000
+$shiphitted-cell-background-color: #C15E48
 
 .cell
   width: 100%
@@ -14,6 +16,12 @@ $hitted-cell-background-color: #60C14F
 
   &.unchecked
     background-color: $unchecked-cell-background-color
+
+  &.ship
+    background-color: $ship-cell-background-color
+
+  &.shiphitted
+    background-color: $shiphitted-cell-background-color
 
   &.miss
     background-color: $miss-cell-background-color

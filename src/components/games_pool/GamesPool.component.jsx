@@ -9,6 +9,7 @@ import { GameAdded } from '../../graphql/subscriptions/Game';
 import TableRow from './TableRow.component';
 import { graphql, withApollo } from 'react-apollo';
 import { AvailableGames } from '../../graphql/queries/Game';
+import { JoinGame } from '../../graphql/mutations/Game';
 
 const loggeduserid = localStorage.getItem('userid');
 
@@ -42,8 +43,13 @@ class GamesPool extends Component {
     });
   }
 
-  joinGame = () => {
-    // this.props.history.push('/game/1');
+  joinGame = (e) => {
+    this.props.client.mutate({
+      mutation: JoinGame,
+      variables: { userid: loggeduserid, id: e.id }
+    }).then(response => {
+      this.props.history.push(`/game/${response.data.joingame.id}`);
+    });
   }
 
   getRows = () => {

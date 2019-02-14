@@ -18,6 +18,18 @@ subscription onGameAdded {
 }
 `;
 
+const GameClicked = gql`
+subscription onGameClicked {
+  gameClicked{
+    id
+    turnId
+    ownerId
+    ownerBoard
+    guestBoard
+  }
+}
+`;
+
 const GameJoined = gql`
 subscription onGameJoined {
   gameJoined{
@@ -37,5 +49,6 @@ subscription onGameJoined {
 
 export {
   GameAdded,
-  GameJoined
+  GameJoined,
+  GameClicked
 };

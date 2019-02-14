@@ -1,19 +1,34 @@
 import gql from 'graphql-tag';
 
-const StartGame = gql`
-  mutation startGame($playerId: String!, $settings: JSON!) {
-    startGame($player: String!, $settings: JSON!)
+const JoinGame = gql`
+mutation joingame($id: String!, $userid: String!)
+{
+  joingame(id: $id, userid: $userid) {
+    id
   }
+}
 `;
 
-const SurrenderGame = gql`
-  mutation surrenderGame($playerId: String!, $gameId: String!) {
-    surrenderGame($playerId: String!, $gameId: String!)
+const CreateGame = gql`
+mutation addGame($userid: String!)
+{
+  addGame(userid: $userid) {
+    id
   }
+}
 `;
 
+const CellClick = gql`
+mutation cellclick($id: String!, $userid: String!, $row: Int!, $col: Int!)
+{
+  cellclick(id: $id, userid: $userid, row: $row, col: $col) {
+    id
+  }
+}
+`;
 
 export {
-  StartGame,
-  SurrenderGame
+  JoinGame,
+  CreateGame,
+  CellClick
 };

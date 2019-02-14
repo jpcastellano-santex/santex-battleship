@@ -48,9 +48,7 @@ class TableRow extends Component {
             </DropdownToggle>
             <DropdownMenu>
               <DropdownItem header>See board</DropdownItem>
-              {(guest && turn.id === loggeduserid) &&
-                <DropdownItem onClick={e => this.props.onPlayClick({ id })}>Play</DropdownItem>
-              }
+              <DropdownItem onClick={e => this.props.onPlayClick({ id })}>Play</DropdownItem>
             </DropdownMenu>
           </ButtonDropdown>
         </td>

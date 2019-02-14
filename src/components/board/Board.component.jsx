@@ -9,7 +9,7 @@ import Cell from '../cell/Cell.component';
 import './Board.sass';
 
 const Board = (props) => {
-  const { matrix, onClick } = props;
+  const { matrix, onClick, myBoard, disabled } = props;
   return (
     <div className="board">
       <div className="board_elements">
@@ -20,6 +20,8 @@ const Board = (props) => {
                 position={{ x: rowIndex, y: columnIndex }}
                 status={matrix[rowIndex][columnIndex]}
                 onClick={onClick}
+                disabled={disabled}
+                myBoard={myBoard}
               />
             </div>
           ))
@@ -33,6 +35,7 @@ const Board = (props) => {
 Board.propTypes = {
   matrix: PropTypes.instanceOf(Array),
   onClick: PropTypes.func.isRequired,
+  myBoard: false
 };
 
 Board.defaultProps = {

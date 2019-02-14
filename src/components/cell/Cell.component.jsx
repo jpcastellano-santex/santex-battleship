@@ -35,21 +35,35 @@ class Cell extends Component {
     const {
       position,
       status,
+      disabled,
+      myBoard
     } = this.props;
 
-    const cellClassName = classNames(
+    const cellClassName = myBoard ? classNames(
       'cell',
       {
         ship: status > cellStatus.WATER,
-        unchecked: status === cellStatus.WATER,
+        unchecked: status <= cellStatus.WATER,
+        shiphitted: status === cellStatus.HITTED
+      },
+    ) : classNames(
+      'cell',
+      {
+        unchecked: status >= cellStatus.WATER,
         miss: status === cellStatus.MISS,
         hitted: status === cellStatus.HITTED,
       },
     );
 
-    return (
-      <button onClick={() => this.clickCell(position.x, position.y, status)} className={cellClassName} type="button" />
-    );
+    if (disabled) {
+      return (
+        <button disabled className={cellClassName} type="button" />
+      );
+    } else {
+      return (
+        <button onClick={() => this.clickCell(position.x, position.y, status)} className={cellClassName} type="button" />
+      );
+    }
   }
 }
 

@@ -21,6 +21,7 @@ query gameboard($id:  String!, $userid: String!)
     ownerBoard
     ownerId
     guestId
+    turnId
   }
 }
 `;
