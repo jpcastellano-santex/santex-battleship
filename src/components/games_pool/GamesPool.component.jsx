@@ -2,7 +2,6 @@
 import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Table } from 'reactstrap';
-// import { graphql } from 'react-apollo';
 import { GameAdded } from '../../graphql/subscriptions/Game';
 
 import TableRow from './TableRow.component';
