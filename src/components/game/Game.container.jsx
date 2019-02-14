@@ -46,22 +46,23 @@ class Game extends Component {
       query: GameClicked,
       fetchPolicy: "no-cache"
     }).subscribe(response => {
-      var isOwner = response.data.gameClicked.ownerId === loggeduserid;
-      var boardname = isOwner ? 'guestBoard' : 'ownerBoard';
-      var myboardname = !isOwner ? 'guestBoard' : 'ownerBoard';
-      var board = response.data.gameClicked[boardname];
-      var myBoard = response.data.gameClicked[myboardname];
-      var turn = response.data.gameClicked.turnId;
-      this.setState({
-        otherBoard: board,
-        myBoard: myBoard,
-        turn: turn
-      });
+      if (this.props.match.params.id === response.data.gameClicked.id) {
+        var isOwner = response.data.gameClicked.ownerId === loggeduserid;
+        var boardname = isOwner ? 'guestBoard' : 'ownerBoard';
+        var myboardname = !isOwner ? 'guestBoard' : 'ownerBoard';
+        var board = response.data.gameClicked[boardname];
+        var myBoard = response.data.gameClicked[myboardname];
+        var turn = response.data.gameClicked.turnId;
+        this.setState({
+          otherBoard: board,
+          myBoard: myBoard,
+          turn: turn
+        });
+      }
     });
   }
 
   getGame() {
-    // console.log(this.props.match.params.id, this.props);
     this.props.client.query({
       query: GameBoard,
       variables: { userid: loggeduserid, id: this.props.match.params.id }

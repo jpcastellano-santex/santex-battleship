@@ -40,8 +40,8 @@ query availablegames($userid: String!)
 `;
 
 const MyGames = gql`
-query mygames{
-  mygames(userid: "5c63179ed2318f19bc307156"){
+query mygames($userid: String!){
+  mygames(userid: $userid){
     id
     turn{
       username
@@ -52,6 +52,7 @@ query mygames{
       username
       id
     }    
+    startDate
   }
 }
 `;

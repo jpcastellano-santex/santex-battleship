@@ -1,40 +1,42 @@
 // Package dependencies
 import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
-import { graphql, withApollo } from 'react-apollo';
+import { withApollo } from 'react-apollo';
 import { Table } from 'reactstrap';
 import *  as _ from 'lodash';
 
 import TableRow from './TableRow.component';
 import { MyGames } from '../../graphql/queries/Game';
-import isEmpty from 'lodash/isEmpty';
 import { GameJoined, GameAdded } from '../../graphql/subscriptions/Game';
-
-const loggeduserid = localStorage.getItem('userid');
 
 class CurrentGames extends Component {
   state = { myGames: [] };
 
   componentDidMount() {
+    this.getGames();
     this.subscribeToJoinGame();
     this.subscribeToGamePool();
   }
 
-  static getDerivedStateFromProps({ data }) {
-    if (!isEmpty(data.mygames)) {
-      return { myGames: data.mygames };
-    }
-    return {};
+  getGames() {
+    this.props.client.query({
+      query: MyGames,
+      variables: { userid: this.props.loggeduserid }
+    }).then(response => {
+      var games = response.data.mygames;
+      this.setState({
+        myGames: games
+      })
+    })
   }
 
-  
   subscribeToGamePool = () => {
     this.props.client.subscribe({
       query: GameAdded,
       fetchPolicy: "no-cache"
     }).subscribe(data => {
       var game = data.data.gameAdded;
-      if (game.owner.id === loggeduserid) {
+      if (game.owner.id === this.props.loggeduserid) {
         var actualGames = this.state.myGames;
         actualGames.push(game);
         this.setState({
@@ -90,4 +92,4 @@ class CurrentGames extends Component {
   }
 }
 
-export default withApollo(graphql(MyGames)(withRouter(CurrentGames)));
+export default withApollo(withRouter(CurrentGames));

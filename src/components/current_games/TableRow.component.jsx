@@ -3,10 +3,7 @@ import React, { Component } from 'react';
 import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import moment from 'moment';
 
-// Local dependencies
-import { formatDate } from '../../helpers/formatters/commons';
-
-const loggeduserid = localStorage.getItem('userid');
+import TimeElapsed from './TimeElapsed.component';
 
 class TableRow extends Component {
   constructor(props) {
@@ -28,18 +25,22 @@ class TableRow extends Component {
     return moment(date).format("DD/MM/YYYY HH:mm");
   }
 
+  getTime = (time) => {
+    return new Date(parseInt(time));
+  }
+
   render() {
-    const { id, createdDate, turn, guest } = this.props;
+    const { id, createdDate, turn, guest, startDate } = this.props;
     return (
       <tr>
         <td>{id}</td>
         <td>{this.timeToDate(createdDate)}</td>
-        <td></td>
+        <TimeElapsed time={startDate}></TimeElapsed>
         {guest &&
           <td>{turn.username}</td>
         }
         {!guest &&
-          <td>Unassigned</td>
+          <td>-</td>
         }
         <td>
           <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>

@@ -11,20 +11,24 @@ import { graphql, withApollo } from 'react-apollo';
 import { AvailableGames } from '../../graphql/queries/Game';
 import { JoinGame } from '../../graphql/mutations/Game';
 
-const loggeduserid = localStorage.getItem('userid');
-
 class GamesPool extends Component {
   state = { gamesAvailable: [] };
 
   componentDidMount() {
     this.subscribeToGamePool();
+    this.getGames();
   }
 
-  static getDerivedStateFromProps({ data }) {
-    if (!isEmpty(data.availablegames)) {
-      return { gamesAvailable: data.availablegames };
-    }
-    return {};
+  getGames() {
+    this.props.client.query({
+      query: AvailableGames,
+      variables: { userid: this.props.loggeduserid }
+    }).then(response => {
+      var games = response.data.availablegames;
+      this.setState({
+        gamesAvailable: games
+      })
+    })
   }
 
   subscribeToGamePool = () => {
@@ -33,7 +37,7 @@ class GamesPool extends Component {
       fetchPolicy: "no-cache"
     }).subscribe(data => {
       var game = data.data.gameAdded;
-      if (game.owner.id !== loggeduserid) {
+      if (game.owner.id !== this.props.loggeduserid) {
         var actualGames = this.state.gamesAvailable;
         actualGames.push(game);
         this.setState({
@@ -46,7 +50,7 @@ class GamesPool extends Component {
   joinGame = (e) => {
     this.props.client.mutate({
       mutation: JoinGame,
-      variables: { userid: loggeduserid, id: e.id }
+      variables: { userid: this.props.loggeduserid, id: e.id }
     }).then(response => {
       this.props.history.push(`/game/${response.data.joingame.id}`);
     });
@@ -78,8 +82,4 @@ class GamesPool extends Component {
   }
 }
 
-export default withApollo(graphql(AvailableGames, {
-  options: {
-    variables: { userid: loggeduserid }
-  }
-})(withRouter(GamesPool)));
+export default withApollo(withRouter(GamesPool));

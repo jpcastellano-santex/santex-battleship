@@ -43,6 +43,7 @@ subscription onGameJoined {
       username
       id
     }    
+    startDate
   }
 }
 `;

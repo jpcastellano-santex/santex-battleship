@@ -9,7 +9,6 @@
 //             <button onClick={() => {
 //                 AvailableGames, {
 //                     options: {
-//                       variables: { userid: loggeduserid }
 //                     }
 //                   }
 //             }}>Join</button>

@@ -40,10 +40,10 @@ class Home extends Component {
         </Row>
         <Row>
           <Col xs="6">
-            <GamesPool />
+            <GamesPool loggeduserid={loggeduserid} />
           </Col>
           <Col xs="6">
-            <CurrentGames />
+            <CurrentGames loggeduserid={loggeduserid} />
           </Col>
         </Row>
       </div>)
