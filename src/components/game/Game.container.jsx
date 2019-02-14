@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'reactstrap';
 import { withRouter } from 'react-router-dom';
 import { withApollo } from 'react-apollo';
+import { Link } from 'react-router-dom';
 
 import Board from '../board/Board.component';
 import SurrenderModal from '../surrender_modal/SurrenderModal.component';
@@ -132,6 +133,9 @@ class Game extends Component {
         <div>
           {(this.state.winner === loggeduserid) && <div>You won</div>}
           {(this.state.winner !== loggeduserid) && <div>You lost</div>}
+          <Link to="/" >
+            Home
+        </Link>
         </div>
       );
     } else {
