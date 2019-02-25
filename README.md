@@ -12,4 +12,16 @@
 	password: `user2p`
 	
 ### Available Features
+1. Login - Logout
+2. Create game
+3. Join game
+4. Surrender game
 
+### Create new user with graphql
+```javascript
+mutation {
+  addUser(username:"stringNewUser", password:"stringNewPassword"){
+    username
+  }
+}
+```
